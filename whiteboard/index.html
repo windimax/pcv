@@ -1,0 +1,826 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8" />
+	<meta name="Keywords" content="" />
+	<meta name="Description" content="" />
+
+	<title>PCV</title>
+
+    <link type="text/css" href="stylesheets/style.css" rel="stylesheet" />  
+    <link type="text/css" href="stylesheets/ionicons.min.css" rel="stylesheet" />  
+    <link type="text/css" href="stylesheets/jquery.fancybox.css" rel="stylesheet" /> 
+    <link type="text/css" href="stylesheets/drawingboard.css" rel="stylesheet" /> 
+    <link type="text/css" href="javascript/components/quilljs/quill.snow.css" rel="stylesheet"> 
+	
+    <script>
+        function require(jsFilePath, callback) {
+            var js = document.createElement("script");
+
+            js.type = "text/javascript";
+            js.src = 'javascript' + jsFilePath;
+
+            if (callback) {
+                js.onload = callback;
+            }
+
+            document.body.appendChild(js);
+        }
+    </script>
+
+    <!-- <script type="text/javascript" src="javascript/components/quilljs/quill.js"></script> -->
+    <!-- <script type="text/javascript" src="javascript/lib/html2canvas.js"></script>    -->
+    <!-- <script type="text/javascript" src="javascript/lib/pako.js"></script>    -->
+    <!-- <script type="text/javascript" src="javascript/scripts/drawingboard.js"></script>        -->
+    <!-- <script type="text/javascript" src="javascript/scripts/whiteboard.js"></script>       -->
+
+    <script type="text/javascript" src="javascript/lib/jquery.js"></script>
+    <script type="text/javascript" src="javascript/lib/jquery-ui.js"></script>
+    <script type="text/javascript" src="javascript/lib/jquery.fancybox.js"></script>   
+    <script type="text/javascript" src="javascript/lib/sprintf.js"></script>   
+    <!-- <script type="text/javascript" src="javascript/lib/lame.js"></script>    -->
+    <script type="text/javascript" src="javascript/lib/Mp3LameEncoder.js"></script>   
+    
+    <script type="text/javascript" src="javascript/scripts/jsCursor.js"></script>  
+    <script type="text/javascript" src="javascript/scripts/whiteboard_recorder.js"></script>       
+    <script type="text/javascript" src="javascript/scripts/voice_recorder.js"></script>   
+    <script type="text/javascript" src="javascript/scripts/require.js" defer></script>      
+
+    
+
+
+    <script>
+        try {
+            document.domain = "lernity.com";
+        } 
+        catch (e) {
+
+        }    
+    </script>
+</head>
+
+<body>
+	<div id="main" class="fullscreen minimalistic">
+        <div class="content">
+            <div class="countdown">
+                <b></b>
+            </div>
+            <div class="viewport">
+                <div class="board">
+                    <div class="backgroundMedia">
+                    </div>
+                    <div class="grid">
+                        <canvas id="grid"></canvas>
+                    </div>       
+                    <div class="whiteboard" id="whiteboard">
+                        <div class="whiteboards"></div>
+                        <!-- <canvas id="penCanvas"></canvas> -->
+                        <div class="drawingboard" id="drawingboard"></div>
+                    </div>  
+                    <i class="cursorPointer"></i>
+
+                    <button 
+                        class="button mini quickQs">
+                        STOP
+                    </button>
+                </div><!-- board -->
+            </div><!-- viewport -->
+
+            <div class="flexPane">
+                <div class="bottomPane">
+                    <div class="wrap WB_preview">
+                        <button class="button new">+</button>
+                        <ul class="scroll thumbs">
+                        </ul>                                
+                    </div>                        
+                </div><!-- bottomPane -->      
+                <div class="basicUi">
+                    <div class="topSection">
+                        <span class="cursor">
+                            <img src="images/icons/icon_cursor.svg" width="36" alt="" />
+                        </span>
+                        <div class="penThikness">
+                            <span class="penSize"> 
+                                <img src="images/icons/icon_marker_a.svg" alt="" />
+                                <i class="size_1 LS_1" data-size="1"></i>
+                                <u></u>
+                            </span>
+                            <span class="penSize"> 
+                                <img src="images/icons/icon_marker_b.svg" alt="" />
+                                <i class="size_2 LS_2" data-size="2"></i>
+                            </span>
+                        </div>
+                        <div class="colorPallete">
+                            <menu class="colorsList">
+                            </menu>                
+                        </div>
+                    </div><!-- topSection -->    
+                    <div class="bottomSection">
+                        <button class="button mini quickQs hidden">
+                            Quick Qs
+                        </button>
+                        <button 
+                            class="button mini quickQs"
+                            data-option="A">
+                            Quick A
+                        </button>
+                        <button 
+                            class="button mini quickQs"
+                            data-option="B">
+                            Quick B
+                        </button>
+                        <div class="playbackPane">
+                            <span class="timer">00:00</span>
+                            <i class="icon ion-record disableOnRec" title="Ctrl+Shift+R"></i>
+                            <i class="icon ion-stop disabled" title="Ctrl+Shift+S"></i>
+                            <i class="icon ion-play disabled disableOnRec"></i>   
+                        </div>       
+                        <span class="undo disabled" id="undo">
+                            <i class="icon ion-ios-undo"></i>
+                        </span>
+                        <span class="redo disabled" id="redo">
+                            <i class="icon ion-ios-redo"></i>
+                        </span>
+                        <span class="clearAll disableOnRec">
+                            <i class="icon ion-trash-b"></i>
+                        </span>                                            
+                        <span class="uiToggle">
+                            <i class="icon ion-arrow-swap"></i>
+                        </span>      
+                    </div><!-- bottomSection -->                                                          
+                </div><!-- basicUi -->                  
+            </div><!-- flexPane -->
+
+            <div class="saveDrawing">
+                <div class="drawingButtons">
+                    <button class="button save">Save</button>
+                    <button class="button cancel">Cancel</button>
+                </div>
+            </div>                  
+
+            <div class="ui">
+                <div class="toolBar">
+                    <span class="uiToggle">
+                        <i class="icon ion-arrow-swap"></i>
+                    </span>                                    
+                    <span class="new disableOnRec" title="new">
+                        <i class="icon ion-document"></i>
+                    </span>
+                    <span class="save hidden" title="save">
+                        <i class="icon ion-help-buoy"></i>                
+                    </span>
+                    <span class="import disableOnRec" title="import">
+                        <i class="icon ion-ios-download-outline"></i>
+                    </span>
+                    <span class="export disableOnRec" title="export">
+                        <i class="icon ion-ios-upload-outline"></i>
+                    </span>                    
+                    <span class="grid_icon">
+                        <i class="icon ion-ios-grid-view-outline"></i>
+                        <input id="gridSize" type="number" min="10" max="100" />                
+                    </span>            
+                    <span class="bgEdit hidden">
+                        <i class="icon ion-images"></i>                
+                    </span>
+                    <span class="quiz disableOnRec">
+                        <i class="icon ion-android-checkbox-outline"></i>                
+                    </span>
+                    <span class="opts">
+                        <i class="icon ion-ios-color-wand"></i>                
+                    </span>
+                    <span class="finger">
+                        <img src="images/icons/icon_touch.svg" width="26" alt="" />
+                    </span>
+                    <span class="clear">
+                        <i class="icon ion-trash-b"></i>
+                    </span>                    
+                    <span class="help">
+                        <i class="icon ion-ios-help-outline"></i>                
+                    </span>
+                </div><!-- toolBar -->   
+
+                <div class="toolBar bottom hidden">
+                    <span class="pen activated">
+                        <img src="images/icons/icon_pencil.svg" width="16" alt="" />
+                    </span>                    
+                    <span class="line_size penSize">
+                        <i class="size_1 LS_1" data-size="1"></i>
+                    </span>                        
+                    <span class="line_size penSize">
+                        <i class="size_2 LS_2" data-size="2"></i>
+                    </span>                        
+                    <span class="undo disabled" id="undo">
+                        <img src="images/icons/icon_undo.svg" width="21" alt="" />
+                    </span>
+                    <span class="redo disabled" id="redo">
+                        <img src="images/icons/icon_redo.svg" width="21" alt="" />
+                    </span>
+                </div><!-- toolBar -->   
+
+                <div class="userPane">
+                    <span class="username">
+                        Kishore Thalari
+                    </span>   
+                    <button class="button mini clear login disableOnRec">
+                        <i class="icon ion-log-in"></i> Login 
+                    </button>                                            
+                    <button class="button mini clear logout disableOnRec">
+                        <i class="icon ion-log-out"></i> Logout
+                    </button>
+                    <i class="icon ion-ios-gear disableOnRec"></i>                       
+                </div><!-- userPane -->
+                <div class="playbackPane">
+                    <i class="icon ion-record disableOnRec" title="Ctrl+Shift+R"> REC</i>   
+                    <i class="icon ion-stop disabled" title="Ctrl+Shift+S"> STOP</i>
+                    <span class="timer">00:00</span>
+                </div><!-- playbackPane --> 
+
+                <div class="cols">
+                    <div class="col">
+                        <div class="wrap recordedSeesions">      
+                            <div class="session">
+                                <span class="actions">
+                                    <span class="rename disableOnRec">
+                                        <i class="icon ion-edit"></i>                    
+                                    </span>
+                                </span>                                                            
+                                <h2>
+                                    Untitled project
+                                </h2>
+                            </div>                                              
+                            <ul class="scroll" id="sortable">
+                            </ul>                                
+                        </div>
+                    </div><!-- col -->
+                    <div class="col">
+                        <div class="wrap mediaLibrary">
+                            <span class="button new disableOnRec">+ New image</span>
+                            <ul class="scroll">
+                                <li data-config='{
+                                    "type": "none"
+                                }'>                
+                                    <i></i>
+                                    <u>None</u>
+                                </li>
+                            </ul>
+                        </div>
+                    </div><!-- col -->                   
+                </div><!-- cols -->
+
+                <div class="colorPallete hidden">
+                    <b></b>
+                    <menu class="colorsList">
+                    </menu>                
+                </div><!-- colorPallete -->    
+
+                <div class="appVersion">
+                    &nbsp;
+                </div>                            
+            </div><!-- ui -->
+
+            <div class="hidden" id="bgMediaTPL">
+                <span class="actions">
+                    <a href="#" class="export">
+                        <b class="ion-ios-upload-outline"></b>
+                    </a>                                            
+                    <span class="edit">
+                        <b class="ion-compose"></b>
+                    </span>                                            
+                    <span class="delete">
+                        <b class="ion-trash-b"></b>
+                    </span>
+                </span>                    
+                <i></i>
+                <u>Image</u>                
+            </div><!-- bgMediaTPL -->  
+
+            <div class="hidden" id="storage">
+                <div class="storageSelection">
+                    <table>
+                        <tr>
+                            <td>
+                                <span class="cloud upload">
+                                    <i class="icon ion-ios-cloud-upload-outline"></i>
+                                </span>
+                                <span class="cloud download">
+                                    <i class="icon ion-ios-cloud-download-outline"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="disk import">
+                                    <i class="icon ion-ios-monitor-outline"></i>
+                                </span>
+                                <span class="disk export">
+                                    <i class="icon ion-ios-monitor-outline"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Amazon cloud
+                            </td>
+                            <td>
+                                Local disk
+                            </td>
+                        </tr>
+                    </table>  
+                </div>              
+            </div><!-- bgMediaTPL -->              
+
+            <div class="hidden" id="newImage">
+                <div class="imageSelection">
+                    <table>
+                        <tr>
+                            <td>
+                                <span class="browse">
+                                    <i class="icon ion-ios-folder-outline"></i>
+                                </span>
+                            </td>                            
+                            <td>
+                                <span class="create">
+                                    <i class="icon ion-ios-compose-outline"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="txtImg">
+                                    <i class="icon ion-ios-paper-outline"></i>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Browse
+                            </td>
+                            <td>
+                                Create
+                            </td>                            
+                            <td>
+                                Type text
+                            </td>                            
+                        </tr>
+                    </table>  
+                </div>              
+            </div><!-- newImage -->                            
+
+            <div class="hidden" id="editImage">
+                <div class="editImage">
+                    <i class="arrow ion-arrow-right-a"></i>                  
+                    <div class="imgPreview cur">
+                        <i class="icon ion-compose"></i>
+                    </div>
+                    <div class="imgPreview new">
+                        <div class="browse">
+                            <i class="icon ion-ios-search-strong"></i>
+                            <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/svg+xml" />
+                        </div>                                                                
+                    </div>
+                    <div>
+                        <button class="button" disabled="disabled">Replace</button>
+                    </div>
+                </div>
+            </div><!-- bgMediaTPL -->                
+                          
+            <div class="hidden" id="AWSupload">
+                <div class="uploadForm">
+                    <div class="row">
+                        <label>
+                            <span>PCV title</span>
+                            <input type="text" name="pcvTitle" />
+                        </label>                
+                    </div>
+                    <div class="row">
+                        <label>
+                            <span>Type of PCV</span>
+                            <input type="text" name="pcvType" />                            
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label>
+                            <span>Module code</span>
+                            <input type="text" name="pcvCode" />
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label>
+                            <input type="checkbox" name="adminMail" /> <i>Notify for review (do not check if work in progress)</i>
+                        </label>
+                    </div>
+                    <div class="row submit">
+                        <button class="button" disabled="disabled">Upload</button>
+                    </div>
+                </div>
+            </div><!-- AWSupload -->                
+
+
+            <div class="hidden" id="login">
+                <div class="loginForm">
+                    <div class="row">
+                        <label>
+                            <span>Login</span>
+                            <input type="text" name="username" value="" />
+                        </label>                
+                    </div>
+                    <div class="row">
+                        <label>
+                            <span>Password</span>
+                            <input type="password" name="password" value="" />
+                        </label>
+                    </div>
+                    <div class="row">
+                        <select name="cmsdb">
+                            <option value="NEW">NEW CMS</option>
+                            <option value="OLD">OLD CMS</option>
+                        </select>
+                    </div>
+
+                    <div class="row submit">
+                        <button class="button">Login</button>
+                    </div>
+                </div>
+            </div><!-- bgMediaTPL -->                
+
+            <div class="hidden" id="cloudProjects">
+                <div class="cloudProjects">
+                    <h2>Select project to import</h2>
+                    <ul>
+                        <li>
+                            <div>
+                                <span>Title</span>
+                                <span>Details</span>
+                                <span>Topic Code</span>
+                                <span>Update Time</span>
+                                <span>Size</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hidden" id="alert">
+                <div class="alert">
+                    <div class="text">
+                        &nbsp;
+                    </div>
+                    <div class="submit">
+                        <button class="button">Submit</button>
+                    </div>
+                </div>
+            </div>
+                          
+            <div class="hidden" id="help">
+                <div class="shortcutsLst">
+                    <h2>Shortcuts to select color:</h2> 
+                    <ul>
+                        <li><b>Red:</b> Ctrl+Shift+1</li>
+                        <li><b>Green:</b> Ctrl+Shift+2</li>
+                        <li><b>Blue:</b> Ctrl+Shift+3</li>
+                        <li><b>Yellow:</b> Ctrl+Shift+4</li>
+                        <li><b>White:</b> Ctrl+Shift+5</li>
+                    </ul>
+
+                    <h2>Shortcuts to start/stop recording:</h2> 
+                    <ul>
+                        <li><b>Start:</b> Ctrl+Shift+R</li>
+                        <li><b>Stop:</b> Ctrl+Shift+S</li>
+                    </ul>
+
+                    <h2>Other shortcuts</h2> 
+                    <ul>
+                        <li><b>Insert quiz option:</b> Ctrl+Shift+O</li>
+                    </ul>
+
+                </div>
+            </div><!-- bgMediaTPL -->                
+
+            <div class="hidden" id="thumbTPL">
+                <span class="actions">
+                    <a href="#" class="delete"></a>
+                </span>           
+                <i></i>
+                <b></b>
+                <u></u>
+            </div><!-- thumbTPL -->
+
+            <div class="hidden" id="sessionTPL">
+                <span class="actions">
+                    <span class="drag">
+                        <i class="ion-arrow-move"></i>
+                    </span>                        
+                    <span class="edit hidden disableOnRec">
+                        <i class="ion-ios-refresh-outline"></i>
+                    </span>                        
+                    <span class="rename disableOnRec">
+                        <i class="icon ion-edit"></i>                    
+                    </span>
+                    <span class="delete disableOnRec">
+                        <i class="ion-trash-b"></i>
+                    </span>
+                </span>                                    
+                <h2>Overview of real world examples</h2>    
+                <div class="player">
+                    <div class="time">
+                        <i>00:00</i>
+                        <i>00:00</i>
+                    </div>
+                    <div class="track">
+                        <b><i></i></b>
+                    </div>
+                    <div class="btn disableOnRec">
+                        <i class="icon ion-play"></i>
+                    </div>                            
+                </div>                 
+            </div><!-- sessionTPL -->
+
+            <div class="hidden">
+                <input type="file" name="file" id="file" />
+            </div>
+
+            <div style="display: none">
+                <div class="newMediaPopup" id="newMediaPopup">
+                    <table>
+                        <tr>
+                            <td colspan="2" align="center">
+                                <label><input type="radio" name="media_type" value="image" checked="checked" /> <u>Image</u></label>
+                                <label><input type="radio" name="media_type" value="video" /> <u>Video</u></label>
+                                <label><input type="radio" name="media_type" value="simulation" /> <u>Simulation</u></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width='40'>
+                                Title
+                            </td>
+                            <td>
+                                <input type="text" name="title" value="" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width='40'>
+                                URL
+                            </td>
+                            <td>
+                                <input type="text" name="url" value="" style="display:none" />
+                                <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/gif,image/svg+xml" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">
+                                <button type="submit" disabled>Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>  
+
+            <div style="display: none">
+                <div class="projectNamePopup" id="projectNamePopup">
+                    <table>
+                        <tr>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                <input type="text" name="title" value="" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">
+                                <button class="button mini">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>                  
+
+            <div style="display: none" id="bgMediaSettings">
+                <div class="bgMediaSettings">
+                    <div class="preview">
+                        <h3>Image preview</h3>
+                        <span>
+                            <i></i>
+                        </span>
+                    </div>      
+                    <div class="left">
+                        <div class="bgColor">
+                            <h3>Bg color</h3>
+                            <span data-color="#000000"></span>
+                            <span data-color="#ffffff"></span>
+                        </div>
+                        <div class="imgScale">
+                            <h3>Image scale</h3>
+                            <i class="dec ion-ios-minus-outline"></i>
+                            <i class="inc ion-ios-plus-outline"></i>
+                        </div>                                                    
+                    </div>
+                    <div class="right">
+                        <div class="alignment">
+                            <h3>Image alignment</h3>
+                            <ul>
+                                <li data-align='lt'></li>
+                                <li data-align='ct'></li>
+                                <li data-align='rt'></li>
+                                <li data-align='lm'></li>
+                                <li data-align='cm'></li>
+                                <li data-align='rm'></li>
+                                <li data-align='lb'></li>
+                                <li data-align='cb'></li>
+                                <li data-align='rb'></li>
+                            </ul>
+                        </div>                                                      
+                    </div>                                              
+                    <div class="submit">
+                        <button class="button">Apply</button>
+                    </div>
+                    <div class="width hidden">
+                        <h3>Image scale</h3>
+                        <input type="number" min="10" max="100" value="50" />
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="quizRecordForm">
+                <ul>
+                    <li class="quizID">
+                        <u>1. Configure Quiz image</u>
+                        <span class="actions">
+                            <i class="icon settings ion-android-settings"></i>
+                            <i class="ion-checkmark-round"></i>
+                        </span>                        
+                    </li>
+                    <li class="intro disabled">
+                        <u>2. Question explanation</u>
+                        <span class="actions">
+                            <i class="icon ion-record" data-section="intro"></i>
+                            <i class="ion-checkmark-round"></i>
+                        </span>
+                    </li>
+                    <li class="correct disabled">
+                        <u>3. Correct answer comment</u>
+                        <span class="actions">
+                            <i class="icon ion-record" data-section="correct"></i>
+                            <i class="ion-checkmark-round"></i>
+                        </span>                        
+                    </li>
+                    <li class="incorrect disabled">
+                        <u>4. Incorrect answer comment</u> 
+                        <span class="actions">
+                            <i class="icon ion-record" data-section="incorrect"></i>
+                            <i class="ion-checkmark-round"></i>
+                        </span>                        
+                    </li>
+                </ul>
+
+                <div class="submit">
+                    <button class="button disabled">finish</button>
+                </div>
+            </div><!-- quizRecordForm -->
+
+
+
+            <div class="quizImageForm">
+                <ul>
+                    <li>
+                        <h3>1. Select marker type</h3>
+                        <div class="options marker">
+                            <label><input type="radio" name="marker" value="ABC"><i>ABC</i></label>
+                            <label><input type="radio" name="marker" value="BOOL"><i>True/False</i></label>
+                        </div>
+                    </li>
+                    <li>
+                        <h3>2. Select a number of options</h3>
+                        <div class="options quantity">
+                            <label><input type="radio" name="quantity" value="2"><i>2</i></label>
+                            <label><input type="radio" name="quantity" value="4"><i>4</i></label>
+                        </div>
+                    </li>
+                    <li>
+                        <h3>3. Select the right answer</h3>
+                        <div class="options answer">
+                        </div>
+                    </li>
+                </ul>                    
+                <div class="submit">
+                    <button class="button disabled">Save and continue</button>
+                </div>                    
+            </div><!-- quizImageForm -->    
+
+            <div class="hidden" id="textEditor">
+                <div class="txtImgEditor">
+                    <div class="toolbar">
+                        <span class="ql-formats">
+                          <select class="ql-size"></select>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-bold"></button>
+                          <button class="ql-italic"></button>
+                          <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                          <select class="ql-color"></select>
+                          <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-header" value="1"></button>
+                          <button class="ql-header" value="2"></button>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-list" value="ordered"></button>
+                          <button class="ql-list" value="bullet"></button>
+                          <button class="ql-indent" value="-1"></button>
+                          <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                          <select class="ql-align"></select>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-image"></button>
+                        </span>
+                        <span class="ql-formats">
+                          <button class="ql-clean"></button>
+                        </span>          
+                        <span class="ql-formats ql-custom">              
+                            <button class="saveToCanvas">Save</button>                        
+                            <button class="closeEditor">Close</button>                       
+                        </span>          
+                    </div>
+                    <div class="editor"><h1 class="ql-align-center"><br></h1><h1 class="ql-align-center"><span style="color: rgb(255, 255, 0);">PCV text widget</span></h1><p class="ql-align-center"><br></p><p class="ql-indent-4"><span style="color: rgb(230, 0, 0);" class="ql-size-large">Change font size in one click</span></p><p class="ql-indent-4"><span style="color: rgb(230, 0, 0);" class="ql-size-large">Set desired text color</span></p><p class="ql-indent-4"><span style="color: rgb(230, 0, 0);" class="ql-size-large">Adjust text padding to your need</span></p><p class="ql-indent-4"><span style="color: rgb(230, 0, 0);" class="ql-size-large">Enhance learning experience with PCV</span></p></div>
+                </div><!-- quizImageForm -->
+            </div>                             
+
+            <div class="hidden">
+                <div class="bitRateSettings">
+                    <h3>Select audio bit rate:</h3>
+                    <select name="bitrate">
+                        <option value="32">32 kbps</option>
+                        <option value="64">64 kbps</option>
+                        <option value="128">128 kbps</option>
+                    </select>
+                    <div class="submit">
+                        <button class="button mini">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- content --> 
+        <div class="notification">
+            &nbsp;
+        </div>        
+    </div><!-- main -->
+    
+    <script>
+        (function() {
+            var script = document.createElement('script');
+            script.onload = function() {
+                var stats = new Stats();
+                stats.dom.style.top = 'auto';
+                stats.dom.style.left = '5px';
+                stats.dom.style.bottom = '5px';
+                document.body.appendChild(stats.dom);
+                requestAnimationFrame(function loop() {
+                    stats.update();
+                    requestAnimationFrame(loop)
+                });
+            };
+            script.src = '//mrdoob.github.io/stats.js/build/stats.min.js';
+            document.head.appendChild(script);
+        })()    
+    </script>
+
+
+    <!-- <script>
+        (function() {
+            var script = document.createElement('script');
+            script.onload = function() {
+                var array = [];
+                for ( var i = 0; i < 500; i ++ ) {
+                    var stats = new Stats();
+                    stats.dom.style.position = 'relative';
+                    stats.dom.style.float = 'left';
+                    document.body.appendChild( stats.dom );
+                    array.push( stats );
+                }
+                function animate() {
+                    for ( var i = 0; i < array.length; i ++ ) {
+                        var stats = array[ i ];
+                        stats.update();
+                    }
+                    requestAnimationFrame( animate );
+                }
+                animate();
+            }
+            script.src = '//mrdoob.github.io/stats.js/build/stats.min.js';
+            document.head.appendChild(script);
+        })()    
+    </script> -->
+            
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+

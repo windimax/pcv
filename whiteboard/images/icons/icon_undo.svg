@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #656e77;
+        stroke-linecap: round;
+        stroke-width: 1.5px;
+      }
+
+      .cls-1, .cls-2 {
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: #656e77;
+      }
+    </style>
+  </defs>
+  <path id="Ellipse_8_copy" data-name="Ellipse 8 copy" class="cls-1" d="M2.574,8.605A8.382,8.382,0,0,1,14.141,5.74,8.534,8.534,0,0,1,16.983,17.4"/>
+  <path id="Forma_1" data-name="Forma 1" class="cls-2" d="M3.362,8.772L8.789,8.789a0.675,0.675,0,0,1,.663.645,0.611,0.611,0,0,1-.614.641l-6.9-.021a0.678,0.678,0,0,1-.463-0.2,0.059,0.059,0,0,1-.009-0.005,0.608,0.608,0,0,1-.142-0.2,0.581,0.581,0,0,1-.056-0.238L1.01,2.692A0.586,0.586,0,0,1,1.6,2.074,0.647,0.647,0,0,1,2.24,2.7l0.2,5.218L2.715,8.829Z"/>
+</svg>

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8" />
+	<meta name="Keywords" content="" />
+	<meta name="Description" content="" />
+
+	<title>MVP</title>
+
+    <link type="text/css" href="stylesheets/style.css" rel="stylesheet" />    
+    <link type="text/css" href="stylesheets/ionicons.min.css" rel="stylesheet" />
+    <link type="text/css" href="stylesheets/drawingboard.css" rel="stylesheet" />   
+
+    <script>
+        window.host = 'http://localhost:8081/';
+        // window.host = 'http://cms1.lernity.com:8081/'
+
+        function require(jsFilePath, callback) {
+            var js = document.createElement("script");
+
+            js.type = "text/javascript";
+            js.src = jsFilePath;
+
+            if (callback) {
+                js.onload = callback;
+            }
+
+            document.body.appendChild(js);
+        }
+
+    </script>
+
+    <link type="text/css" href="javascript/components/feedback/feedback.css" rel="stylesheet" />    
+    <script src="javascript/components/feedback/feedback.js" defer type="text/javascript" ></script>     
+
+    <script type="text/javascript" src="javascript/lib/jquery.js"></script>
+    <script type="text/javascript" src="javascript/lib/NoSleep.min.js"></script>
+    <script type="text/javascript" src="javascript/lib/screenfull.js"></script>
+    <script type="text/javascript" src="javascript/lib/platform.js"></script>
+    
+    <script type="text/javascript" src="javascript/providers/progressData.js"></script>
+    <script type="text/javascript" src="javascript/providers/uaData.js"></script>
+    
+    <script type="text/javascript" src="javascript/scripts/httpUtils.js"></script>
+    <script type="text/javascript" src="javascript/scripts/fixpcv.js"></script>  
+    <script type="text/javascript" src="javascript/scripts/jsCursor.js"></script>  
+    <script type="text/javascript" src="javascript/scripts/whiteboard.js"></script>      
+    <script type="text/javascript" src="javascript/scripts/drawingboard.js"></script>       
+    <script type="text/javascript" src="javascript/scripts/jsTimeline.js"></script>  
+    <script type="text/javascript" src="javascript/scripts/pcvPlayer.js"></script>  
+    <script type="text/javascript" src="javascript/scripts/pcvPlayerInit.js"></script> 
+
+    <script>
+        //window.lhost = "http://192.168.1.11/";
+        try {
+            document.domain = "lernity.com";
+        }
+        catch (e) {
+
+        }
+    </script>
+
+
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-85207883-1', 'auto');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+    
+</head>
+
+<body>
+	<div id="main" class="standalone">
+        <div class="content">
+            <div class="hidden">
+                <input type="file" name="file" id="file" />
+            </div>
+            <div class="board blank">
+                <div class="jsTimeline"></div>
+                <div class="backgroundMedia"></div>
+                <div class="whiteboard" id="whiteboard">
+                    <div class="whiteboards"></div>
+                        <canvas id="penCanvas"></canvas>
+                        <!-- <div class="drawingboard" id="drawingboard"></div> -->
+                </div>
+                <div class="segments">
+                    <div class="title"></div>
+                    <div class="list"></div>
+                    <span class="ion-close"></span>
+                </div><!-- segments -->                
+                <div class="controls">
+                    <div class="progressbar">
+                        <span class="maintrack">
+                            <i></i>
+                        </span>
+                        <span class="minitrack">
+                            <i></i>
+                        </span>                                                
+                    </div><!-- progressbar -->
+                    <span class="tooltip">
+                    </span>                    
+                    <div class="toggle">
+                        <i class="btnIcon ion-play"></i>
+                        <i class="btnIcon ion-pause"></i>
+                    </div>
+                    <div class="quickSeek">
+                        <i class="btnIcon RE ion-ios-reload"></i>                        
+                        <i class="btnIcon FF ion-ios-reload"></i>
+                    </div>
+                    <span class="time">
+                        <i>00:00</i>
+                        <i>00:00</i>
+                    </span>    
+                    <div class="addons">
+                        <span class="btn list">
+                            <i class="ion-android-list"></i>
+                        </span>                                                                              
+                        <span class="btn settings">
+                            <i class="ion-ios-gear"></i>
+                            <span class="speed">
+                                <span data-speed="0.5">0.5</span>
+                                <span data-speed="0.75">0.75</span>
+                                <span data-speed="1" class="active">Normal</span>
+                                <span data-speed="1.25">1.25</span>
+                                <span data-speed="1.5">1.5</span>
+                            </span>
+                        </span>                                                            
+                        <span class="btn rating">
+                            <i class="ion-ios-chatboxes"></i>
+                        </span>                                    
+                        <span class="btn screensize">
+                            <i class="ion-android-contract"></i>
+                            <i class="ion-android-expand"></i>
+                        </span>                                    
+                    </div>
+                </div><!-- controls -->
+            </div>
+        </div><!-- content --> 
+	</div><!-- main -->
+
+    <div class="feedbackComponent hidden">
+        <div class="componentContent">
+            <div class="feedbackForm">
+                <h1>Your rating</h1>
+                <div class="stars">
+                    <input type="radio" name="rating" id="star5" value="5" />
+                    <label for="star5">
+                        <i class="ion-ios-star-outline"></i>
+                        <i class="ion-ios-star"></i>
+                    </label>
+
+                    <input type="radio" name="rating" id="star4" value="5" />
+                    <label for="star4">
+                        <i class="ion-ios-star-outline"></i>
+                        <i class="ion-ios-star"></i>
+                    </label>
+
+                    <input type="radio" name="rating" id="star3" value="5" />
+                    <label for="star3">
+                        <i class="ion-ios-star-outline"></i>
+                        <i class="ion-ios-star"></i>
+                    </label>
+
+                    <input type="radio" name="rating" id="star2" value="5" />
+                    <label for="star2">
+                        <i class="ion-ios-star-outline"></i>
+                        <i class="ion-ios-star"></i>
+                    </label>
+
+                    <input type="radio" name="rating" id="star1" value="5" />
+                    <label for="star1">
+                        <i class="ion-ios-star-outline"></i>
+                        <i class="ion-ios-star"></i>
+                    </label>
+                </div>
+                <h1>Your feedback</h1>
+                <textarea class="message" rows="3" placeholder="Enter your message"></textarea>
+                <div class="buttonGroup">
+                    <button class="button submit">Send</button>
+                    <button class="button clear cancel">Cancel</button>
+                </div>
+                <p>
+                    You can also write to 
+                    <a href="mailto:support@lernity.com">support@lernity.com</a> 
+                    for help.
+                </p>
+            </div>          
+        </div>
+    </div>    
+
+    <div class="hidden">
+        <svg version="1.1" class="SVGTick" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 37 37" style="enable-background:new 0 0 37 37;" xml:space="preserve">
+        <polyline class="tick path" style="fill:none;stroke:#81de72;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" points="
+            11.6,20 15.9,24.2 26.4,13.8 "/>
+        </svg>
+        <svg version="1.1" class="SVGCross" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 37 37" style="enable-background:new 0 0 37 37;" xml:space="preserve">
+            <path class="line1 path" style="fill:none;stroke:#ff0000;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" d="M9,8 l20,20" />
+            <path class="line2 path" style="fill:none;stroke:#ff0000;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" d="M29,8 l-20,20" />            
+        </svg>
+    </div>
+
+</body>
+</html>
+
+

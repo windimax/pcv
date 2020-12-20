@@ -1,0 +1,180 @@
+::placeholder {
+	color: #999999;
+}
+
+.feedbackComponent {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+	left: 0px; top: 0px;
+	visibility: hidden;
+
+	font-family: -apple-system, "Helvetica Neue", "Roboto", sans-serif;	
+	color: #585858;	
+}
+
+.feedbackComponent:before {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0px top: 0px;
+	background: rgba(0,0,0,0.4);
+	content: '';
+	opacity: 0;
+	z-index: 0;
+}
+
+.feedbackComponent:after {
+	position: absolute;
+	left: 50%; top: 50%;
+	content: 'Please wait...';
+	font-size: 18px;
+	color: #ffffff;
+	opacity: 0;
+	z-index: 0;
+
+   -webkit-transform: translate(-50%, -50%);
+   -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);			
+}
+
+.feedbackComponent:after,
+.feedbackComponent:before {
+   -webkit-transition: opacity 0.3s ease-in-out;    	   	
+   -moz-transition: opacity 0.3s ease-in-out;    
+	transition: opacity 0.3s ease-in-out;    	
+}
+
+.feedbackComponent.busy:before {
+	z-index: 10;
+	opacity: 1;
+}
+
+.feedbackComponent.busy:after {
+	z-index: 20;	
+	opacity: 1;
+}
+
+.feedbackComponent .componentContent {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0px; top: 0px;
+	background: #efeff4;;
+
+   -webkit-transform: translate(0%, 100%);
+   -moz-transform: translate(0%, 100%);
+    transform: translate(0%, 100%);			
+}
+
+.feedbackComponent.ready .componentContent {
+   -webkit-transition: transform 0.3s ease-in-out;    	   	
+   -moz-transition: transform 0.3s ease-in-out;    
+	transition: transform 0.3s ease-in-out;    
+}
+
+.feedbackComponent.shown {
+	visibility: visible;
+	z-index: 10000;
+}
+
+.feedbackComponent.present .componentContent {
+   -webkit-transform: translate(0%, 0%);
+   -moz-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);			
+}
+
+
+.feedbackComponent .feedbackForm {
+	width: 80%;
+	max-width: 560px;
+	position: absolute;
+	left: 50%; top: 50%;
+	text-align: center;
+	z-index: 1;
+
+   -webkit-transform: translate(-50%,-50%);
+   -moz-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);				
+}
+
+.feedbackComponent .feedbackForm h1 {
+	margin: 0px 0px 15px 0px;
+	font-weight: 300;
+	font-size: 22px;
+}
+
+.feedbackComponent .feedbackForm textarea {
+	width: 100%;
+	display: block;
+	background: none;
+	margin: 0px 0px 30px 0px;
+	padding: 0px 0px 0px 0px;
+	border: 1px solid #c8c7cc;
+	border-width: 0px 0px 1px 0px;
+	line-height: 1.3;
+	font-size: 14px;
+}
+
+.feedbackComponent .feedbackForm .buttonGroup {
+	margin: 0px 0px 30px 0px;
+}
+
+.feedbackComponent .feedbackForm .buttonGroup > * {
+	margin: 0px 5px 0px 5px;
+}
+
+
+.feedbackComponent .feedbackForm .stars {
+
+	display: flex;
+	flex-direction: row-reverse;
+  	align-items: center;
+	justify-content: center;
+
+	margin: 0px 0px 30px 0px;
+	text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+	text-align: center;
+	font-size: 44px;
+	color: #ffff00;	
+}
+
+.feedbackComponent .feedbackForm .stars > label {
+	margin: 0px 2px 0px 2px;
+	position: relative;
+	cursor: pointer;
+}
+
+.feedbackComponent .feedbackForm .stars .ion-ios-star {
+	position: absolute;
+	left: 0px; top: 50%;
+	opacity: 0;
+
+   -webkit-transition: opacity 0.1s ease-in-out;    	   	
+   -moz-transition: opacity 0.1s ease-in-out;      
+	transition: opacity 0.1s ease-in-out;    	
+
+   -webkit-transform: translate(0%, -50%);
+   -moz-transform: translate(0%, -50%);
+    transform: translate(0%, -50%);				
+}
+
+.feedbackComponent .feedbackForm .stars input {
+	display: none
+}
+
+.feedbackComponent .feedbackForm .stars label:hover .ion-ios-star,
+.feedbackComponent .feedbackForm .stars label:hover ~ label .ion-ios-star,
+.feedbackComponent .feedbackForm .stars input:checked ~ label .ion-ios-star {
+	opacity: 1;
+}
+
+.feedbackComponent .feedbackForm .stars input:checked ~ label:hover .ion-ios-star,
+.feedbackComponent .feedbackForm .stars input:checked ~ label:hover ~ label .ion-ios-star {
+	color: #ffee00;
+}
+
+
+
+
