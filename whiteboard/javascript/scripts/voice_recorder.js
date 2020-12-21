@@ -1,8 +1,11 @@
 "use strict";
 
-    var worker,
-        useWorker = false;
+require("/lib/lame.js");	
 
+    var worker,
+        useWorker = true;
+
+        
     var VoiceRecorder = function() {
 
         var defaults = {
@@ -81,11 +84,11 @@
     var gStrmMp3 = []; //Collection of MP3 buffers
     var gIsRecording = false;
     var gCfg = { //Encoder configuration
-            chnlCt: 2, //1=mono, 2=stereo
+            chnlCt: 1, //1=mono, 2=stereo
             // bufSz: 0, //input buffer size (bytes), 16bit signed int.
             bufSz: 4096, //input buffer size (bytes), 16bit signed int.
             sampleRate: 44100, //Input sample rate (samples per second)
-            bitRate: 128 //Output bit rate (9-128)
+            bitRate: 32 //Output bit rate (9-128)
     };
     var gPcmCt = 0; //Total input bytes
     var gMp3Ct = 0; //Total output bytes
@@ -188,7 +191,9 @@
 
     //Create the mp3 encoder object.
     function Mp3Create() {
-        if (!(gEncoder = new Mp3LameEncoder(gCfg.sampleRate, gCfg.bitRate))) {
+        if (!(gLame = new lamejs())) {
+            console.log("ERR: Unable to create LAME object.");
+        } else if (!(gEncoder = new gLame.Mp3Encoder(gCfg.chnlCt, gCfg.sampleRate, gCfg.bitRate))) {
             console.log("ERR: Unable to create MP3 encoder.");
         } else {
             console.log("MP3 encoder created.");
@@ -238,19 +243,19 @@
                         });            
                     }
 
-                    // selfDiagnosis = {
-                    //     data: {
-                    //         gMp3Ct: gMp3Ct
-                    //     },
-                    //     timer: setInterval(() => {
-                    //         if (selfDiagnosis.data.gMp3Ct !== gMp3Ct) {
-                    //             selfDiagnosis.data.gMp3Ct = gMp3Ct;
-                    //         } else {
-                    //             clearInterval(selfDiagnosis.timer);
-                    //             audioRecAlert();                                
-                    //         }
-                    //     }, 5000)
-                    // };
+                    selfDiagnosis = {
+                        data: {
+                            gMp3Ct: gMp3Ct
+                        },
+                        timer: setInterval(() => {
+                            if (selfDiagnosis.data.gMp3Ct !== gMp3Ct) {
+                                selfDiagnosis.data.gMp3Ct = gMp3Ct;
+                            } else {
+                                clearInterval(selfDiagnosis.timer);
+                                audioRecAlert();                                
+                            }
+                        }, 5000)
+                    };
                          
                 });
             }
@@ -281,13 +286,13 @@
                 });            
             }
             else {
-                // var mp3 = gEncoder.flush();
-                // if (mp3.length > 0)
-                //     gStrmMp3.push(mp3);
+                var mp3 = gEncoder.flush();
+                if (mp3.length > 0)
+                    gStrmMp3.push(mp3);
                 //Present the mp3 stream on the page.
-                blob = gEncoder.finish();
-                // gStrmMp3 = [];
-                // clearInterval(selfDiagnosis.timer);
+                blob = createMp3Blob(gStrmMp3);
+                gStrmMp3 = [];
+                clearInterval(selfDiagnosis.timer);
                 console.log("STOP");
                 callbacks.onStop(blob)
             }
@@ -304,7 +309,7 @@
         //     return;
         var inBuf = e.inputBuffer;
         var samples = inBuf.getChannelData(0);
-        // var sampleCt = samples.length;
+        var sampleCt = samples.length;
         //Convert floating-point to 16bit signed int.
         //This may modify the number of samples.
 
@@ -315,11 +320,8 @@
             });
         }
 
-        // var samples16 = convertFloatToInt16(samples);
-
-        gEncoder.encode(getBuffers(e));
-
-        // if (samples.length > 0) {
+        var samples16 = convertFloatToInt16(samples);
+        if (samples16.length > 0) {
             // var remaining = samples16.length;
             // for (var i = 0; remaining >= 0; i += maxSamples) {
             //   var left = samples16.subarray(i, i + maxSamples);
@@ -328,29 +330,19 @@
             //   remaining -= maxSamples;
             // }
 
-            // gEncoder.encode([samples]);
-
-            // gPcmCt += samples16.length * 2;
+            gPcmCt += samples16.length * 2;
             //Encode PCM to mp3
-            // var mp3buf = gEncoder.encode([samples]);
-            // var mp3Ct = mp3buf.length;
-            // if (mp3Ct > 0) {
-            //     //Add buffer to in-memory output stream.
-            //     gStrmMp3.push(mp3buf);
-            //     gMp3Ct += mp3Ct;
-            // }
+            var mp3buf = gEncoder.encodeBuffer(samples16);
+            var mp3Ct = mp3buf.length;
+            if (mp3Ct > 0) {
+                //Add buffer to in-memory output stream.
+                gStrmMp3.push(mp3buf);
+                gMp3Ct += mp3Ct;
+            }
             // console.log("%d / %d: %2.2f%%", gPcmCt, gMp3Ct, (gMp3Ct * 100) / gPcmCt);
-        // }
+        }
 
     }
-
-    function getBuffers(event) {
-        var buffers = [];
-        for (var ch = 0; ch < 2; ++ch)
-          buffers[ch] = event.inputBuffer.getChannelData(ch);
-        return buffers;
-      }
-      
 
     //Convert floating point to 16bit signed int.
     function convertFloatToInt16(inFloat) {
