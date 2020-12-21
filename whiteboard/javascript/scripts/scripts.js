@@ -1642,6 +1642,7 @@ function init() {
 		mergeDrawing();
 	};
 
+
 	function showQuizOptions() {
 		if (status === 'recording') {
 			$('.toolBar .opts').hide();

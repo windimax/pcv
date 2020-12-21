@@ -982,7 +982,7 @@ $(document).ready(function () {
 			}
 
 			if (context.jsCursorData) {
-				$board.jsCursor('forceUpdate', context.time);
+				$board.jsCursor('setTime', context.time);
 			};
 			$jsTimeline.jsTimeline('forceUpdate', context.time);
 			context.watchedTime += 100;

@@ -223,6 +223,8 @@ $(document).ready(function () {
 	};
 
 
+
+
 	function handleMousedown(e) {
 		mousedown = true;
 		whiteboard.handleSimulatedEvent(e);
@@ -231,6 +233,7 @@ $(document).ready(function () {
 
 	function handleMousemove(e) {
 		whiteboard.handleSimulatedEvent(e);
+		// drawCursor(e);
 	};
 
 
@@ -242,6 +245,27 @@ $(document).ready(function () {
 			$mainCanvas.addClass('changed');
 		};
 	};
+
+
+	// var img = new Image();
+	// img.src = 'images/cross.png';
+
+	// let $cursorCanvas = $('#cursorCanvas');
+	// let cursorCanvasCtx = $cursorCanvas.get(0).getContext('2d');
+	// let cursorFadeDelay;
+
+	// function drawCursor(point) {
+	// 		$cursorCanvas.fadeIn();
+
+	// 		cursorCanvasCtx.clearRect(0, 0, cursorCanvasCtx.canvas.width, cursorCanvasCtx.canvas.height);
+	// 		cursorCanvasCtx.drawImage(img, point.pageX - 16, point.pageY - 16);
+
+	// 		clearTimeout(cursorFadeDelay);
+	// 		cursorFadeDelay = setTimeout(() => {
+	// 			$cursorCanvas.fadeOut();
+	// 		}, 500);
+	// }
+
 
 
 	function handleGridChange(flag) {

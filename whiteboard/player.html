@@ -44,7 +44,7 @@
     
     <script type="text/javascript" src="javascript/scripts/httpUtils.js"></script>
     <script type="text/javascript" src="javascript/scripts/fixpcv.js"></script>  
-    <script type="text/javascript" src="javascript/scripts/jsCursor.js"></script>  
+    <script type="text/javascript" src="javascript/scripts/jsCursor.js" defer></script>  
     <script type="text/javascript" src="javascript/scripts/whiteboard.js"></script>      
     <script type="text/javascript" src="javascript/scripts/drawingboard.js"></script>       
     <script type="text/javascript" src="javascript/scripts/jsTimeline.js"></script>  
@@ -83,6 +83,17 @@
                 <div class="whiteboard" id="whiteboard">
                     <div class="whiteboards"></div>
                         <canvas id="penCanvas"></canvas>
+                        <canvas 
+                            style="
+                                position: absolute; 
+                                opacity: 1;
+                                left: 0; 
+                                top: 0;
+                            "
+                            id="cursorCanvas"
+                            width="960"
+                            height="541">
+                        </canvas>
                         <!-- <div class="drawingboard" id="drawingboard"></div> -->
                 </div>
                 <div class="segments">
