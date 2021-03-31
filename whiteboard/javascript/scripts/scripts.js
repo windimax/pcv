@@ -1000,8 +1000,15 @@ function init() {
 						pcvDuration = pcv.json.whiteboardEvents[pcv.json.whiteboardEvents.length - 1].time;
 
 					console.log(audioDuration, pcvDuration);
-					console.log(audioDuration/pcvDuration);
 					console.log(pcv.json.whiteboardEvents);
+
+					let audioRatio = audioDuration / pcvDuration;
+
+					pcv.json.whiteboardEvents.forEach(e => {
+						console.log(e.time);
+						e.time = Math.round(e.time * audioRatio);
+						console.log(e.time);
+					})
 
 					//audioDuration and pcvDuration delta should not be more than 3% or 5 seconds;
 					if (audioDuration > 30000 && Math.abs(1 - audioDuration / pcvDuration) > 0.03 ||
