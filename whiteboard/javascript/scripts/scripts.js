@@ -998,6 +998,11 @@ function init() {
 				.on('loadedmetadata', function () {
 					let audioDuration = this.duration * 1000,
 						pcvDuration = pcv.json.whiteboardEvents[pcv.json.whiteboardEvents.length - 1].time;
+
+					console.log(audioDuration, pcvDuration);
+					console.log(audioDuration/pcvDuration);
+					console.log(pcv.json.whiteboardEvents);
+
 					//audioDuration and pcvDuration delta should not be more than 3% or 5 seconds;
 					if (audioDuration > 30000 && Math.abs(1 - audioDuration / pcvDuration) > 0.03 ||
 						Math.abs(audioDuration - pcvDuration) > 5000) {
