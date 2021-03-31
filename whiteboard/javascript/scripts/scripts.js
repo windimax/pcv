@@ -987,35 +987,26 @@ function init() {
 			var reader = new FileReader();
 			reader.onload = function (progressEvent) {
 				pcv.audio = this.result
-				onAudioStringCreated(pcv);
+
+				$('<audio>')
+					.attr({
+						src: URL.createObjectURL(audioBlob)
+					})
+					.on('loadedmetadata', function () {
+						pcv.audioDuration = this.duration * 1000;
+						let pcvDuration = pcv.json.whiteboardEvents[pcv.json.whiteboardEvents.length - 1].time;
+						
+						//audioDuration and pcvDuration delta should not be more than 3% or 5 seconds;
+						if (pcv.audioDuration > 30000 && Math.abs(1 - pcv.audioDuration / pcvDuration) > 0.03 ||
+							Math.abs(pcv.audioDuration - pcvDuration) > 5000) {
+							showSegmentAudioWarning();
+						}
+
+						onAudioStringCreated(pcv);
+					});
+
 			};
 			reader.readAsDataURL(audioBlob);
-
-			$('<audio>')
-				.attr({
-					src: URL.createObjectURL(audioBlob)
-				})
-				.on('loadedmetadata', function () {
-					let audioDuration = this.duration * 1000,
-						pcvDuration = pcv.json.whiteboardEvents[pcv.json.whiteboardEvents.length - 1].time;
-
-					console.log(audioDuration, pcvDuration);
-					console.log(pcv.json.whiteboardEvents);
-
-					let audioRatio = audioDuration / pcvDuration;
-
-					pcv.json.whiteboardEvents.forEach(e => {
-						console.log(e.time);
-						e.time = Math.round(e.time * audioRatio);
-						console.log(e.time);
-					})
-
-					//audioDuration and pcvDuration delta should not be more than 3% or 5 seconds;
-					if (audioDuration > 30000 && Math.abs(1 - audioDuration / pcvDuration) > 0.03 ||
-						Math.abs(audioDuration - pcvDuration) > 5000) {
-						showSegmentAudioWarning();
-					}
-				});
 		}
 		else {
 			onAudioStringCreated(pcv);
@@ -1033,6 +1024,22 @@ function init() {
 
 
 	function onAudioStringCreated(pcv) {
+		
+		let jsCursorData = getJsCursorEvents();
+
+		let pcvDuration = pcv.json.whiteboardEvents[pcv.json.whiteboardEvents.length - 1].time;
+		let audioRatio = pcv.audioDuration / pcvDuration;
+		
+		pcv.json.whiteboardEvents.forEach(e => {
+			e.time = Math.round(e.time * audioRatio);
+		});
+
+		jsCursorData.forEach(e => {
+			console.log('****************');
+			console.log(e.t);
+			e.t = Math.round(e.t * audioRatio);
+			console.log(e.t);
+		})
 
 		var $li = $('.recordedSeesions .blank');
 
@@ -1045,7 +1052,7 @@ function init() {
 
 			quiz_ctx[recorder.section] = {
 				segments: pcv,
-				jsCursorData: getJsCursorEvents()
+				jsCursorData: jsCursorData
 			};
 
 			$.fancybox.open({
@@ -1062,7 +1069,7 @@ function init() {
 
 			$li
 				.data('pcv', pcv)
-				.data('cursorEvents', getJsCursorEvents())
+				.data('cursorEvents', jsCursorData)
 				.find('h2').text('Segment ' + (parseInt(index) + 1)).end()
 				.removeClass('blank')
 
