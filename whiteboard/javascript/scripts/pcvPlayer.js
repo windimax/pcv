@@ -731,6 +731,21 @@ $(document).ready(function () {
 					.attr({
 						src: base64toBlobUrl(segment.audio)
 					})
+					.on('loadedmetadata', function () {
+						let audioDuration = this.duration * 1000;
+						let pcvDuration = pcv.json.whiteboardEvents[pcv.json.whiteboardEvents.length - 1].time;
+						let audioRatio = audioDuration / pcvDuration;
+						
+						segment.json.whiteboardEvents.forEach(e => {
+							console.log('*****************');
+							console.log(e.time);
+							e.time = Math.round(e.time * audioRatio);
+							console.log(e.time);
+						});
+						segment.jsCursorData.forEach(e => {
+							e.t = Math.round(e.t * audioRatio);
+						});
+					})
 					.appendTo($pcv_playerPlaylist)
 			}
 

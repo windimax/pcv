@@ -1035,10 +1035,7 @@ function init() {
 		});
 
 		jsCursorData.forEach(e => {
-			console.log('****************');
-			console.log(e.t);
 			e.t = Math.round(e.t * audioRatio);
-			console.log(e.t);
 		})
 
 		var $li = $('.recordedSeesions .blank');
